@@ -15,7 +15,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
 
 # Private DNS A Record for Cosmos DB
 data "external" "private_endpoint_nic" {
-  program = ["bash", "./get_nic_name.sh", "cosmosdb-private-endpoint", "AKS-POC"]
+  program = ["bash", "./get_nic_name.sh", "cosmosdb-private-endpoint", "${var.rg}"]
 }
 
 output "nic_name" {
