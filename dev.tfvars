@@ -1,0 +1,11 @@
+rg = "AKS-POC"
+node_count = 1
+vm_size = "standard_b8pls_v2"
+location = "West US"
+cluster_name = "aks-cluster-mongo"
+vpc_name = "vnet-aks-cosmos"
+vpc_address_range = ["10.0.0.0/16"]
+az_pre_end_name="cosmosdb-private-endpoint"
+dns_link_name = "dns-link"
+pr_connection_name = "cosmosdb-psc"
+cosmosdb_name="cosmosdb-azure"
