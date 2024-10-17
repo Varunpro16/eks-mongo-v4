@@ -14,9 +14,17 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
 }
 
 # Private DNS A Record for Cosmos DB
+data "external" "private_endpoint_nic" {
+  program = ["bash", "./get_nic_name.sh", "cosmosdb-private-endpoint", "AKS-POC"]
+}
+
+output "nic_name" {
+  value = data.external.private_endpoint_nic.result["nic_name"]
+}
+
+
 data "azurerm_network_interface" "private_endpoint_nic" {
-#   name                = "cosmosdb-private-endpoint.nic.761c9ae9-ddc9-4416-8bb3-6273470c12ca"
-  name                = azurerm_private_endpoint.private_endpoint.private_service_connection[0].name
+  name                = data.external.private_endpoint_nic.result["nic_name"]
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
@@ -25,6 +33,9 @@ resource "azurerm_private_dns_a_record" "private_dns_record" {
   zone_name           = azurerm_private_dns_zone.private_dns.name
   resource_group_name = data.azurerm_resource_group.rg.name
   ttl                 = 300
-
-  records = [data.azurerm_network_interface.private_endpoint_nic.private_ip_address]
+  records = [
+    data.azurerm_network_interface.private_endpoint_nic.private_ip_address != null ?
+      data.azurerm_network_interface.private_endpoint_nic.private_ip_address :
+      "0.0.0.0"  # Dummy IP address during plan phase
+  ]
 }
